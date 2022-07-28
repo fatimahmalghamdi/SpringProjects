@@ -51,7 +51,6 @@ public class Book {
 	}
 
 
-
 	@PrePersist
 	protected void onCreate(){
 		this.createdAt = new Date();
