@@ -14,16 +14,19 @@ public class ExpenseService {
 		this.expenseRepository = expenseRepo;
 	}
 	
+	//get all items method:
 	public List<Expenses> getAllExpenses(){
 		List<Expenses> allExpenses = expenseRepository.findAll();
 		return allExpenses;
 	}
 	
+	//save method:
 	public Expenses createExpense(Expenses expense) {
 		Expenses new_expense = expenseRepository.save(expense);
 		return new_expense;
 	}
 	
+	//get item by Id method:
 	public Expenses getCurrentExpense(Long id) {
 		Optional<Expenses> optionalExpense = expenseRepository.findById(id);
 		if(optionalExpense.isPresent()) {
@@ -32,20 +35,20 @@ public class ExpenseService {
 		return null;
 	}
 	
-	public Expenses editExpense(Expenses theExpense) {
-		Expenses edited_expense = getCurrentExpense(theExpense.getId());
-		edited_expense = expenseRepository.save(theExpense);
-		return edited_expense;
+	//update method:
+	public Expenses editExpense(Long id, Expenses theExpense) {
+		Expenses edited_expense = getCurrentExpense(id);
+		edited_expense.setExpense_name(theExpense.getExpense_name());
+		edited_expense.setVendor(theExpense.getVendor());
+		edited_expense.setAmount(theExpense.getAmount());
+		edited_expense.setDescription(theExpense.getDescription());
+		return expenseRepository.save(edited_expense);
 	}
 	
+	//delete item method:
 	public void deleteExpense(Long id) {
 		Expenses expense = getCurrentExpense(id);
 		expenseRepository.delete(expense);
-	}
-	
-	public Expenses findExpense(Long id) {
-		Optional<Expenses> theExpense = expenseRepository.findById(id);
-		return theExpense.get();
 	}
 
 }

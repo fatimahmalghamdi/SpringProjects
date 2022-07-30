@@ -36,9 +36,11 @@ public class ExpenseController {
 		return "expensesPage.jsp";
 	}
 	
+	//save the new item:
 	@RequestMapping(value="", method=RequestMethod.POST)
 	public String storeExpenses(@Valid @ModelAttribute("myExpense") Expenses expense,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		//if there's validation errors --> add them to Flash attr then redirect to create page
 		if (bindingResult.hasErrors()) {
 			System.out.println("Inside the bindingResult*******************");
 			//add the expense object and its validation messages to the model:
@@ -46,11 +48,13 @@ public class ExpenseController {
 			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.myExpense", bindingResult);
 			return "redirect:/";
 		}
+		//no errors --> save and redirect to main page:
 		expenseService.createExpense(expense);
 		redirectAttributes.addFlashAttribute("success", "The expense has been added successfully");
 		return "redirect:/expenses";
 	}
 	
+	//display the update page of item:
 	@RequestMapping(value="/editPage/{id}", method=RequestMethod.GET)
 	public String editPage(@PathVariable("id") Long id, Model model){
 		if(!model.containsAttribute("current_expense")) {
@@ -63,24 +67,24 @@ public class ExpenseController {
 		return "editExpense.jsp";
 	}
 	
-	
-	
+	//update an item:
 	@RequestMapping(value="/toEdit/{id}", method=RequestMethod.PUT)
 	public String saveEdit(@PathVariable("id") Long id, @Valid @ModelAttribute("current_expense") Expenses theExpense,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes,
 			Model model){
+		//check if there's an error --> redirect to display edit page
 		if(bindingResult.hasErrors()) {
 			redirectAttributes.addFlashAttribute("current_expense", theExpense);
 			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.current_expense", bindingResult);
-			System.out.println("there is an error here *************  " + theExpense.getId());
 			return "redirect:/expenses/editPage/{id}";
 		}
-		expenseService.editExpense(theExpense);
+		//no errors --> update the item then redirect to main page
+		expenseService.editExpense(id,theExpense);
 		redirectAttributes.addFlashAttribute("success", "The expense has been Updated successfully");
-		System.out.println("no error and updated ************   "+ theExpense.getId());
 		return "redirect:/expenses";
 	}
 	
+	//delete an item:
 	@RequestMapping(value="/delete/{id}", method=RequestMethod.DELETE)
 	public String destroy(@PathVariable("id") Long id, RedirectAttributes redirectAttributes){
 		expenseService.deleteExpense(id);
@@ -88,9 +92,10 @@ public class ExpenseController {
 		return "redirect:/expenses";
 	}
 	
+	//get details about item:
 	@RequestMapping("/display/{id}")
 	public String displayDetails(@PathVariable("id") Long id, Model model) {
-		Expenses theExpense = expenseService.findExpense(id);
+		Expenses theExpense = expenseService.getCurrentExpense(id);
 		model.addAttribute("theExpense",theExpense);
 		return "expenseInfo.jsp";
 	}
