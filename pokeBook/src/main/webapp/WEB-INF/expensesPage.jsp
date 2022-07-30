@@ -31,14 +31,20 @@
 					<th>Expense</th>
 					<th>Vendor</th>
 					<th>Amount</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 				<c:forEach var="expense" items="${allExpenses}">
 				<tr>
-					<td><c:out value="${expense.getExpense_name()}"></c:out></td>
-					<td><c:out value="${expense.getVendor()}"></c:out></td>
-					<td>$<c:out value="${expense.getAmount()}"></c:out></td>
+					<td><a href="/expenses/display/${expense.getId()}"><c:out value="${expense.getExpense_name()}"/></a></td>
+					<td><c:out value="${expense.getVendor()}"/></td>
+					<td>$<c:out value="${expense.getAmount()}"/></td>
+					<td><a href="/expenses/editPage/${expense.getId()}">Edit</a></td>
+					<td><form action="/expenses/delete/${expense.getId()}" method="post">
+    					<input type="hidden" name="_method" value="delete">
+    					<input type="submit" value="Delete">
+					</form></td>
 				</tr>
 				</c:forEach>
 			</tbody>
